@@ -147,7 +147,7 @@ dialog::backdrop{background:rgba(36,24,72,.55)}
 .bubble{position:absolute;left:0;top:0;white-space:nowrap;font-size:12px;font-weight:700;color:var(--px);line-height:1;background:#FFFDF5;padding:6px 9px 5px;margin:2px;
   box-shadow:0 -2px 0 0 var(--px),0 2px 0 0 var(--px),-2px 0 0 0 var(--px),2px 0 0 0 var(--px),0 4px 0 0 rgba(91,69,150,.25);will-change:transform}
 body.no-pets .stage, body.no-pets .strip{display:none}
-@media (prefers-reduced-motion:reduce){.toast{transition:none}.machine.win-glow{animation:none}}
+
 </style>
 </head>
 <body>
@@ -364,13 +364,21 @@ $('toBottom').onclick=()=>scrollTo({top:document.documentElement.scrollHeight,be
 })();
 
 /* ----- 슬롯 뽑기 ----- */
-const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const RM = false;   // 휴대폰 '동작 줄이기·애니메이션 제거'(절전 모드에서 자동으로 켜지기도 함)와 상관없이 움직임
 let pickScope='전체', picked=null, spinning=false;
 /* ----- 8비트 효과음 ----- */
 let AC=null, SND=true; try{ SND=localStorage.getItem('chivee-sound')!=='0'; }catch(e){}
 function sndUI(){ $('sndBtn').textContent=SND?'🔊':'🔇'; $('sndBtn').setAttribute('aria-pressed',SND); }
 $('sndBtn').onclick=()=>{ SND=!SND; try{ localStorage.setItem('chivee-sound',SND?'1':'0'); }catch(e){} sndUI(); if(SND) beep(880,0.06,'square',0); };
 sndUI();
+/* 휴대폰: 화면을 처음 누르는 순간 소리 장치를 켜 둠 (그래야 뽑기 첫 소리부터 나옴) */
+function unlockAudio(){
+  try{ if(navigator.audioSession) navigator.audioSession.type='playback'; }catch(e){}   // 아이폰 무음 스위치와 상관없이
+  try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+    const b=AC.createBuffer(1,1,22050), src=AC.createBufferSource(); src.buffer=b; src.connect(AC.destination); src.start(0); }catch(e){}
+  if(AC && AC.state==='running'){ ['pointerdown','touchend','keydown'].forEach(ev=>removeEventListener(ev,unlockAudio,true)); }
+}
+['pointerdown','touchend','keydown'].forEach(ev=>addEventListener(ev,unlockAudio,true));
 function beep(f,dur,type='square',delay=0,vol=0.05,f2=null){
   if(!SND) return;
   try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
@@ -570,7 +578,6 @@ function buildPark(host,wide,gutter){
   drawClouds();
 }
 function drawClouds(){ for(const c of CLOUDS){ const d=BG.cloud; c.el.style.transform=`translate(${snap(c.x-d.w*S/2)}px,${snap(c.y)}px)`; } }
-if(!matchMedia('(prefers-reduced-motion: reduce)').matches)
   setInterval(()=>{ for(const c of CLOUDS){ c.x+=S*c.v; if(c.x>c.max) c.x=c.min; } drawClouds(); }, 450);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,t)=>a+(b-a)*t;
 const Ez={io:t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,out:t=>1-Math.pow(1-t,3)};
