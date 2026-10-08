@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>치비♪ 노래 리스트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EFEDF7; --sheet:#FFFFFF; --ink:#211E36; --soft:#6B6785; --line:#DCD8EA;
+  --cobalt:#3346D3; --rose:#D9417F; --rose-bg:#FBE4EE; --hot:#C2410C; --hot-bg:#FDE7DA; --prac:#1F7A55; --prac-bg:#DDF2E7;
+  --chip:#E4E1F1;
+  --display:"Do Hyeon","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#16142A; --sheet:#201D38; --ink:#EDEBFA; --soft:#A6A2C4; --line:#33304F;
+  --cobalt:#8C99FF; --rose:#FF7EB0; --rose-bg:#3A2140; --hot:#FF9A62; --hot-bg:#3A2522; --prac:#6FD3A3; --prac-bg:#1D3A30; --chip:#2C2948;}}
+:root[data-theme="dark"]{
+  --paper:#16142A; --sheet:#201D38; --ink:#EDEBFA; --soft:#A6A2C4; --line:#33304F;
+  --cobalt:#8C99FF; --rose:#FF7EB0; --rose-bg:#3A2140; --hot:#FF9A62; --hot-bg:#3A2522; --prac:#6FD3A3; --prac-bg:#1D3A30; --chip:#2C2948;}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 150px)}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 var(--body)}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px 48px}
+header.top{padding:28px 0 10px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font:400 clamp(44px,11vw,72px)/0.9 var(--display);margin:0;letter-spacing:-0.01em}
+h1 .note{color:var(--rose)}
+.sub{color:var(--soft);margin:8px 0 0;font-size:14px}
+.pick{font:400 20px/1 var(--display);background:var(--ink);color:var(--paper);border:0;border-radius:999px;padding:14px 22px;cursor:pointer}
+.pick:hover{background:var(--cobalt)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding:10px 0 8px;border-bottom:1px solid var(--line)}
+.search{display:flex;gap:8px}
+.search input{flex:1;min-width:0;font:inherit;font-size:16px;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--sheet);color:var(--ink)}
+.search input:focus{outline:none;border-color:var(--cobalt)}
+.search select{font:inherit;font-size:14px;padding:0 10px;border:1.5px solid var(--line);border-radius:12px;background:var(--sheet);color:var(--ink)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;font:500 14px/1 var(--body);padding:8px 12px;border-radius:999px;border:0;background:var(--chip);color:var(--ink);cursor:pointer;white-space:nowrap}
+.chip b{font-weight:400;color:var(--soft);margin-left:4px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.chip[aria-pressed="true"] b{color:inherit;opacity:.7}
+.chip.own{background:var(--rose-bg);color:var(--rose)}
+.chip.own[aria-pressed="true"]{background:var(--rose);color:#fff}
+.count{color:var(--soft);font-size:13px;padding:10px 2px 4px}
+h2{font:400 26px/1 var(--display);margin:26px 0 6px;display:flex;align-items:baseline;gap:8px}
+h2 small{font:400 13px var(--body);color:var(--soft)}
+h2.own{color:var(--rose)}
+ul{list-style:none;margin:0;padding:0;background:var(--sheet);border-radius:14px;overflow:hidden}
+li{border-top:1px solid var(--line)}
+li:first-child{border-top:0}
+li button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:11px 14px;cursor:pointer}
+li button:hover{background:var(--chip)}
+li button:focus-visible{outline:2px solid var(--cobalt);outline-offset:-2px}
+.t{font-weight:600;font-size:15.5px;overflow-wrap:anywhere}
+.a{color:var(--soft);font-size:13.5px;grid-column:1}
+.meta{grid-column:2;grid-row:1/3;align-self:center;text-align:right;font-size:12.5px;color:var(--soft);white-space:nowrap}
+.meta .n{display:block;font-weight:600;color:var(--ink);font-size:13px}
+.tag{display:inline-block;font:600 11.5px/1 var(--body);padding:4px 7px;border-radius:6px;margin-left:6px;vertical-align:2px}
+.tag.hot{background:var(--hot-bg);color:var(--hot)} .tag.prac{background:var(--prac-bg);color:var(--prac)}
+.tag.new{background:var(--cobalt);color:#fff} .tag.ver{background:var(--chip);color:var(--soft)}
+.empty{padding:40px 16px;text-align:center;color:var(--soft)}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+dialog{border:0;border-radius:20px;padding:0;background:var(--sheet);color:var(--ink);width:min(420px,calc(100% - 32px))}
+dialog::backdrop{background:rgba(20,16,40,.55)}
+.ticket{padding:26px 24px 20px;text-align:center}
+.ticket .g{font-size:13px;color:var(--soft)}
+.ticket .tt{font:400 34px/1.1 var(--display);margin:10px 0 6px;overflow-wrap:anywhere}
+.ticket .aa{color:var(--soft)}
+.ticket .row{display:flex;gap:8px;margin-top:22px}
+.ticket .row button{flex:1;font:500 15px var(--body);padding:12px;border-radius:12px;border:0;cursor:pointer}
+.ticket .again{background:var(--chip);color:var(--ink)} .ticket .copy{background:var(--cobalt);color:#fff}
+.ticket .close{background:none;border:0;color:var(--soft);font:inherit;margin-top:12px;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>치비<span class="note">♪</span></h1>
+      <p class="sub">신청할 곡을 누르면 제목이 복사돼요</p>
+    </div>
+    <button class="pick" id="pick" type="button">아무 곡이나 뽑기</button>
+  </header>
+  <div class="bar">
+    <div class="search">
+      <input id="q" type="search" placeholder="제목, 가수, 초성(ㅂㄴㅂ)으로 찾기" aria-label="곡 찾기" autocomplete="off">
+      <select id="sort" aria-label="정렬">
+        <option value="name">가나다순</option>
+        <option value="many">많이 부른 순</option>
+        <option value="recent">최근 부른 순</option>
+      </select>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="장르"></div>
+  </div>
+  <div class="count" id="count" aria-live="polite"></div>
+  <main id="list"></main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<dialog id="dlg">
+  <div class="ticket">
+    <div class="g" id="dg"></div>
+    <div class="tt" id="dt"></div>
+    <div class="aa" id="da"></div>
+    <div class="row"><button class="again" id="again" type="button">다시 뽑기</button><button class="copy" id="dcopy" type="button">제목 복사</button></div>
+    <button class="close" id="dclose" type="button">닫기</button>
+  </div>
+</dialog>
+<script>
+const DATA=[["치비 노래","거짓말","치비","",5,"2026-02-22",""],["치비 노래","멈춘 시간 위에 서 있어","치비","",1,"2026-05-03",""],["치비 노래","불나방","치비","",10,"2026-07-19",""],["치비 노래","언젠가","치비","",2,"2026-01-22",""],["치비 노래","Daily","치비","",0,"",""],["치비 노래","Hangman","치비","",6,"2026-07-19",""],["치비 노래","Mirage","치비","",5,"2026-04-28",""],["치비 노래","Save me","치비","",4,"2026-07-19","튠ver"],["가요","가시연꽃","알리","",0,"",""],["가요","거짓말","BIGBANG","",0,"",""],["가요","거짓말 거짓말 거짓말","이적","",0,"",""],["가요","고백","박혜경","",2,"2026-09-22",""],["가요","구름","Chil Label","",3,"2026-04-02",""],["가요","그리워해요","2NE1","",1,"2025-09-15",""],["가요","기억을 걷는 시간","넬","",1,"2026-03-24",""],["가요","깊은 밤을 날아서","이문세","",1,"2026-04-23",""],["가요","꽃길","BIGBANG","",0,"",""],["가요","꿈에","박정현","헬곡",1,"2026-05-05",""],["가요","나로 말할 것 같으면","MAMAMOO","",0,"",""],["가요","나만 부를 수 있는 노래","바닷길","",1,"2026-03-23",""],["가요","날 봐, 귀순","대성","",0,"",""],["가요","남자답게","아웃사이더","",0,"",""],["가요","낭만고양이","체리필터","",1,"2026-01-12",""],["가요","내가 제일 잘 나가","2NE1","",0,"",""],["가요","냉면","명카드라이브","",1,"2026-03-23",""],["가요","너는 어땠을까","노을","",2,"2026-04-26",""],["가요","너를 위해","황인욱","",1,"2026-02-21",""],["가요","너를위해","임재범","",2,"2026-03-29",""],["가요","너의 의미","김창완","",1,"2025-11-24",""],["가요","널 기다리고 있을게","수란","",1,"2026-01-27",""],["가요","널 위해","G-DRAGON","",0,"",""],["가요","네가 내리던 밤","BUJA project","",4,"2026-03-10",""],["가요","노엘","박정현","",0,"",""],["가요","눈사람","정승환","",5,"2026-03-24",""],["가요","눈코입","태양","",1,"2025-06-06",""],["가요","다가와서","브아걸","",1,"2026-04-19",""],["가요","다시 사랑한다면","김필","",1,"2026-03-18",""],["가요","두사람","성시경","",1,"2025-06-11",""],["가요","라라라","이수영","",1,"2026-04-19",""],["가요","라타타","(여자)아이들","",0,"",""],["가요","러브송","7공주","",1,"2026-04-19",""],["가요","레몬트리","박혜경","",0,"",""],["가요","마마","김필선","",0,"",""],["가요","마지막처럼","BLACKPINK","",0,"",""],["가요","만약에","태연","",1,"2025-09-13",""],["가요","말하는대로","처진달팽이","",1,"2026-03-23",""],["가요","멋진 헛간","오대천왕","",4,"2026-04-28",""],["가요","멍청이","HWASA","",1,"2026-04-12",""],["가요","못다핀 꽃 한송이","마야","",2,"2026-04-23",""],["가요","무제","G-DRAGON","",0,"",""],["가요","뭐라할까","브리즈","",0,"",""],["가요","바위섬","김원중","",1,"2026-04-30",""],["가요","발레리노","리쌍","",2,"2026-04-19",""],["가요","밤편지","IU","",0,"",""],["가요","뱅뱅뱅","BIGBANG","",0,"",""],["가요","버블시스터즈","버블시스터즈","",0,"",""],["가요","벌써일년","브라운아이드소울","",1,"2026-04-19",""],["가요","별이 빛나는 밤","MAMAMOO","",0,"",""],["가요","별풍쏴라 애송이","","",1,"2025-09-08",""],["가요","보라빛밤","선미","",2,"2026-03-11",""],["가요","보여줄게","에일리","",0,"",""],["가요","봄날","BTS","",0,"",""],["가요","블루밍","IU","",0,"",""],["가요","비밀번호 486","윤하","",0,"",""],["가요","비행기","거북이","",0,"",""],["가요","비행소녀","마골피","",1,"2026-04-19",""],["가요","빌런","스텔라 쟝","",0,"",""],["가요","빙고","거북이","헬곡",0,"",""],["가요","삐삐","IU","",0,"",""],["가요","사랑아 가지마","임정희","",0,"",""],["가요","사랑앓이","FT아일랜드","",2,"2026-04-28",""],["가요","사랑의 인사","씨야","",1,"2026-04-19",""],["가요","서신","박혜경","",2,"2026-03-23",""],["가요","소년이여","G-DRAGON","",0,"",""],["가요","소리쳐봐","현진영","",0,"",""],["가요","소우주","BTS","",1,"2026-03-23",""],["가요","손대지마","에일리","",1,"2026-03-29",""],["가요","순정마초","파리돼지앵","",1,"2026-03-23",""],["가요","스물다섯 스물하나","자우림","",3,"2025-12-31",""],["가요","시대를 초월한 마음","이누야샤ost","",1,"2026-06-28",""],["가요","시작","박기영","",2,"2026-09-22",""],["가요","신데렐라","서인영","",2,"2026-04-28",""],["가요","신호등","보니","",0,"",""],["가요","신호등","이무진","",0,"",""],["가요","아라리","심규선","",0,"",""],["가요","아름다운 강산","이선희","",0,"",""],["가요","아름다운 세상","유리상자","",0,"",""],["가요","아틀란티스 소녀","BoA","",0,"",""],["가요","아파","보니","",0,"",""],["가요","아파","2NE1","",2,"2026-04-02","Slow"],["가요","어른아이","거미","",2,"2026-09-29",""],["가요","에잇","IU","",0,"",""],["가요","에코","행복한나를","",1,"2026-04-30",""],["가요","여전히 아름다운지","김연우","",0,"",""],["가요","예감 좋은 날","럼블피쉬","",0,"",""],["가요","오리날다","체리필터","",0,"",""],["가요","외톨이","아웃사이더","",0,"",""],["가요","외톨이야","씨엔블루","",1,"2025-12-22",""],["가요","우주를 줄게","볼빨간 사춘기","",1,"2025-06-06",""],["가요","음오아예","MAMAMOO","",0,"",""],["가요","이 소설의 끝을 써보려 해","한동근","",0,"",""],["가요","이런날에는","호뽀","",3,"2026-04-07",""],["가요","이하이","한숨","",1,"2026-04-23",""],["가요","인연","이선희","헬곡",0,"",""],["가요","작은 것들을 위한 시","BTS","",1,"2025-09-30",""],["가요","저녁하늘","에일리","",1,"2025-09-23",""],["가요","전설 속의 누군가처럼","신승훈","",1,"2026-04-19",""],["가요","전하지 못한 진심","BTS","",0,"",""],["가요","제발","이소라","",1,"2026-04-12",""],["가요","제주도의 푸른밤 (원곡 성시경)","태연","",0,"",""],["가요","주문","동방신기","",0,"",""],["가요","주문-MIROTIC","동방신기","",1,"2026-05-05",""],["가요","직감","씨앤블루","",1,"2026-04-07",""],["가요","천상연","이창섭","",4,"2025-12-31",""],["가요","첫눈처럼 너에게 가겠다","에일리","",1,"2026-03-31",""],["가요","친구여","조PD(feat.인순이)","",1,"2026-04-26",""],["가요","퀸카","(여자)아이들","",0,"",""],["가요","파랗게","WOODZ","",1,"2025-07-20",""],["가요","파파라치","간미연","",3,"2026-04-23",""],["가요","편지","김광진","연습곡",0,"",""],["가요","피아노맨","MAMAMOO","",0,"",""],["가요","피카부 (Peek-A-Boo)","Red Velvet (레드벨벳)","",1,"2026-04-05",""],["가요","하늘을 달리다","이적","",4,"2025-12-30",""],["가요","하루하루","BIGBANG","",0,"",""],["가요","한숨","이하이","",0,"",""],["가요","행복한 나를","에코","",1,"2026-02-02",""],["가요","헤어지자 말해요","박재정","",1,"2025-10-02",""],["가요","호랑풍류가","Narae","",1,"2025-10-03",""],["가요","혼자가 아닌 나","서영은","",1,"2025-12-31",""],["가요","혼자한 사랑","김현정","",1,"2026-05-03",""],["가요","홀로","이하이","",1,"2026-02-22",""],["가요","홍연","안예은","",2,"2026-03-31",""],["가요","화","(여자)아이들","",0,"",""],["가요","화(火花)","(여자)아이들","",2,"2026-04-23",""],["가요","황혼의 문턱","왁스","",2,"2026-01-12",""],["가요","0+0","한로로","",1,"2026-07-09",""],["가요","Anymotion","이효리","",1,"2026-04-19",""],["가요","APT.","ROSÉ & Bruno Mars","",2,"2026-04-28",""],["가요","Better Than Yesterday","MC스나이퍼","",1,"2026-04-19",""],["가요","Cafe","BIGBANG","",0,"",""],["가요","Ditto","NewJeans","",0,"",""],["가요","Dream Serenade","Chil Label","",4,"2026-07-02",""],["가요","Eight","아이유","",1,"2026-04-26",""],["가요","ELEVEN","IVE","",2,"2026-04-14",""],["가요","Fantastic Baby","BIGBANG","",0,"",""],["가요","Fire","2ne1","",1,"2026-04-19",""],["가요","GEE","소녀시대","",1,"2026-03-23",""],["가요","Go Away","2NE1","",0,"",""],["가요","Good Goodbye","HWASA","",2,"2026-07-09","트로트ver"],["가요","Gravity","보니","",0,"",""],["가요","Heartbreaker","G-DRAGON","",1,"2026-06-25",""],["가요","Heaven","에일리","",1,"2026-02-22",""],["가요","Hot Issue","포미닛","",1,"2026-04-23",""],["가요","Hype Boy","NewJeans (뉴진스)","",1,"2026-05-03",""],["가요","I Don`t Care","2ne1","",1,"2026-04-19",""],["가요","In The Club","2NE1","",0,"",""],["가요","IVE","Love dive","",1,"2026-07-06",""],["가요","La Vie en Rose","IZ*ONE","",1,"2026-04-23",""],["가요","Last Dance","BIGBANG","",0,"",""],["가요","Let's Dance","퓨처라이거","",1,"2026-03-23",""],["가요","Lollipop","2NE1","",0,"",""],["가요","Lonely","2NE1","",0,"",""],["가요","LOVE DIVE","IVE","",1,"2026-03-08",""],["가요","Love Wins All","IU","",3,"2026-10-03",""],["가요","No.1","BoA","",0,"",""],["가요","Nobody","Wonder Girls","",1,"2026-03-23",""],["가요","Respect","안신애","",0,"",""],["가요","Sofa","크러쉬","",1,"2026-07-09",""],["가요","STAY","블랙핑크 (BLACKPINK)","",1,"2026-04-23",""],["가요","Super Star","쥬얼리","",1,"2026-04-28",""],["가요","Timeless","SG워너비","",1,"2026-04-19",""],["가요","TUFF LIFE","사포","",2,"2026-06-16",""],["가요","U&I","에일리","",0,"",""],["가요","Ugly","2ne1","",1,"2026-04-16",""],["가요","Way Back Home","숀","",2,"2026-05-03",""],["가요","Y","프리스타일","",2,"2026-04-28",""],["가요","You and I","박봄","",3,"2026-07-09","조롱ver"],["팝","냥냥냥냥","Billie Eilish","",1,"2026-04-19",""],["팝","2002","Anne Marie","",3,"2026-04-26",""],["팝","A Thousand Years","Christina Perri","",1,"2025-10-03",""],["팝","abcdefu","GAYLE","",1,"2025-06-18",""],["팝","Ain't Been Done","Jessie J","",0,"",""],["팝","All I Ask","Adele","",5,"2026-10-03",""],["팝","All of Me","John Legend","",1,"2025-12-17",""],["팝","Alone","Heart","헬곡",1,"2026-10-01",""],["팝","Always Remember Us This Way","Lady Gaga","연습곡",1,"2025-09-30",""],["팝","Americano","Lady Gaga","",1,"2026-05-03",""],["팝","Angel Down","Lady Gaga","",1,"2026-03-23",""],["팝","Apologize","OneRepublic","",2,"2026-07-14",""],["팝","Attention","Charlie Puth","",4,"2026-07-19",""],["팝","...Baby One More Time","Britney Spears","",0,"",""],["팝","Back To Black","Amy Winehouse","",1,"2025-11-17",""],["팝","Bad","Christopher","",2,"2026-04-26",""],["팝","Bad Day","Daniel Powter","",2,"2026-04-02",""],["팝","Bad Guy","Billie Eilish","",0,"",""],["팝","Bad Romance","Lady Gaga","",4,"2026-05-05",""],["팝","Bam Bam","Camila Cabello","",5,"2026-03-23",""],["팝","Battlefield","Jordin Sparks","",2,"2026-06-25","튠ver"],["팝","Be Be Your Love","Rachael Yamagata","",4,"2026-03-20",""],["팝","Beautiful, Dirty, Rich","Lady Gaga","",1,"2026-04-12",""],["팝","Because Of You","Kelly Clarkson","",2,"2026-04-28",""],["팝","Beggin'","Måneskin","",3,"2026-04-26",""],["팝","Believer","Imagine Dragons","",0,"",""],["팝","Bird Set Free","Sia","",1,"2025-11-10",""],["팝","Bird Set Free(Feat. 실내자전거)","Sia","",1,"2025-11-10",""],["팝","Bohemian Rhapsody","Queen","",0,"",""],["팝","Born This Way","Lady Gaga","",1,"2026-03-08",""],["팝","Bring me to Life","Evanescence","",0,"",""],["팝","bury a friend","Billie Eilish","NEW",2,"2026-04-16",""],["팝","Butter","BTS","",0,"",""],["팝","California King Bed","Rihanna","",4,"2026-07-19",""],["팝","Can You Feel the Love Tonight","Elton John","",1,"2025-09-15",""],["팝","Can't Help Falling in Love","Elvis Presley","",0,"",""],["팝","Can't Take My Eyes Off You","Frankie Valli","",4,"2025-12-23",""],["팝","Can’t Fight The Moonlight","LeAnn Rimes","",2,"2026-07-11",""],["팝","Champion","Pixie Lott","",3,"2026-01-26",""],["팝","Chandelier","Sia","",0,"",""],["팝","Cheap Thrills","Sia","",2,"2026-02-25",""],["팝","close to you","The Carpenters","",4,"2026-07-09",""],["팝","Counting Stars","OneRepublic","",1,"2025-12-07",""],["팝","Crazy","Gnarls Barkley","",1,"2026-04-19",""],["팝","Cruel Summer","Taylor swift","",2,"2026-07-06",""],["팝","Dance Monkey","Tones And I","",5,"2026-04-26",""],["팝","Dangerously","Chalie Puth","",1,"2025-06-11",""],["팝","Despacito","Luis Fonsi","",5,"2026-07-02",""],["팝","Diamonds","Rihanna","",2,"2025-11-25",""],["팝","Don't Know Why","Norah Jones","",5,"2026-06-25",""],["팝","Don't Start Now","Dua Lipa","",1,"2025-12-22",""],["팝","Don't Stop The Music","Rihanna","",1,"2026-02-10",""],["팝","Dope","Lady Gaga","",1,"2025-11-11",""],["팝","Dreamers","Jung Kook & BTS","",1,"2026-04-05",""],["팝","Driver's License","Olivia Rodrigo","",0,"",""],["팝","Dynamite","BTS","",0,"",""],["팝","Enemy","Imagine Dragons","",2,"2026-04-26",""],["팝","Englishman in new york","Sting","",1,"2026-05-05",""],["팝","Everytime","Britney Spears","",0,"",""],["팝","Ex's & Oh's","Elle King","",1,"2026-07-19",""],["팝","Eyes, Nose, Lips","Lydia Paek","",1,"2026-02-25",""],["팝","Faded","Alan Walker","",1,"2026-07-19",""],["팝","Fallin","Alicia Keys","",1,"2026-02-02",""],["팝","Feeling Good","Michael Bublé","",1,"2026-07-19",""],["팝","Firework","Katy Perry","",0,"",""],["팝","Flashlight","Jessie J","",2,"2026-03-20",""],["팝","Flowers","Miley Cyrus","",3,"2026-09-24",""],["팝","Fly Me To The Moon","Frank Sinatra","",7,"2026-07-19",""],["팝","Friends","Anne Marie","",1,"2026-03-04",""],["팝","Girls Like You","Maroon 5","",9,"2026-07-14",""],["팝","Goodbye","Jessica","",0,"",""],["팝","Gravity","Sara Bareilles","",5,"2026-07-02",""],["팝","Grenade","Bruno Mars","",1,"2026-04-07",""],["팝","Gypsy","Lady Gaga","",2,"2026-05-12",""],["팝","Hallelujah","","연습곡",0,"",""],["팝","Halo","Beyoncé","",0,"",""],["팝","Happy Ending","MIKA","",1,"2026-05-12",""],["팝","Happy!","Mocca","",2,"2026-04-02",""],["팝","Heart Attack","Demi Lovato","",1,"2025-12-01",""],["팝","Heavy Is the Crown","LINKIN PARK","",1,"2026-05-15",""],["팝","Hello","Adele","",2,"2026-04-26",""],["팝","High Hopes","Panic! At The Disco","",1,"2025-12-31",""],["팝","Hips Don't Lie","Shakira, Ed Sheeran, Beéle","",1,"2026-01-26",""],["팝","Hit the Road Jack","Ray Charles","",2,"2026-10-03",""],["팝","Hold My Hand","Lady Gaga","",4,"2026-07-09",""],["팝","Holding Out For A Hero","Bonnie Tyler","",1,"2025-10-03",""],["팝","Hushabye Mountain","Chitty Chitty Bang Bang O.S.T","",1,"2026-07-19",""],["팝","I Don’t Think That I Like Her","Charlie Puth","",2,"2026-07-16",""],["팝","I Knew You Were Trouble","Taylor Swift","",2,"2026-03-06",""],["팝","I Surrender","Céline Dion","",1,"2026-02-10",""],["팝","I Was Here","Beyoncé","",2,"2026-03-23",""],["팝","I Will Survive","Gloria Gaynor","",1,"2026-07-19",""],["팝","I'll Make A Man Out of You(Mulan O.S.T.)","Mulan O.S.T.","",1,"2026-05-03",""],["팝","I'll Never Love Again","Lady Gaga","",2,"2026-07-19",""],["팝","I'm Not the Only One","Sam Smith","연습곡",0,"",""],["팝","idontwannabeyouanymore","Billie Eilish","",10,"2026-10-01",""],["팝","If I Ain't Got You","Alicia Keys","",6,"2026-04-14",""],["팝","If I Die Young","The Band Perry","",3,"2025-12-29",""],["팝","If I Were a Boy","Beyoncé","",1,"2025-08-03",""],["팝","Imagine","John Legend","",0,"",""],["팝","It's My Life","Bon Jovi","",7,"2026-09-29",""],["팝","Judas","Lady Gaga","",0,"",""],["팝","Juice","Lizzo","",3,"2026-05-03",""],["팝","Just Dance","Lady Gaga","",0,"",""],["팝","Just the two of us","Bill Withers","",1,"2026-03-18",""],["팝","Just The Way You Are","Bruno Mars","",1,"2026-01-12",""],["팝","Kings & Queens","Ava Max","",2,"2026-03-26",""],["팝","La Vie en Rose","Lady Gaga","",1,"2026-04-23",""],["팝","lady marmalade","Christina Aguilera, Lil' Kim, Mya, P!nk","",1,"2026-04-19",""],["팝","Lay me Down","Maroon 5","",0,"",""],["팝","Legends Never Die","League of Legends","",4,"2026-06-28",""],["팝","Let It Go","Idina Menzel","",2,"2026-05-03",""],["팝","Levitating","Dua Lipa","",6,"2026-07-11",""],["팝","Levitating (feat. DaBaby)","Dua Lipa","",1,"2026-07-09",""],["팝","Like I'm Gonna Lose You","Meghan Trainor","",1,"2026-01-11",""],["팝","Listen","Beyoncé","",2,"2026-03-31",""],["팝","Lose You To Love Me","Selena Gomez","",4,"2026-06-28",""],["팝","Lost Stars","Adam Levine","",1,"2025-10-03",""],["팝","love and hate","Camylio","",2,"2026-05-05",""],["팝","Love and Hate (Live Performance)","Camylio","",1,"2026-04-19",""],["팝","Love On Top","Beyoncé","연습곡",1,"2025-10-03",""],["팝","Love the Way you Lie","Rihanna","",0,"",""],["팝","Love The Way You Lie (Part II)","Rihanna","",2,"2026-02-21",""],["팝","Love Yourself","Justin Bieber","",0,"",""],["팝","Lovely","Billie Eilish","",2,"2026-05-16",""],["팝","Make You Feel My Love","Adele","",9,"2026-10-01",""],["팝","Marry The Night","Lady Gaga","",1,"2026-02-22",""],["팝","Marry You","Bruno Mars","",2,"2026-09-29",""],["팝","Memories","Maroon 5","",1,"2025-11-11",""],["팝","Mercy","Duffy","",2,"2025-11-17",""],["팝","Million Reasons","Lady Gaga","",4,"2026-09-29",""],["팝","Misery","Maroon 5","",1,"2026-03-06",""],["팝","more to life","Stacie Orrico","",1,"2026-04-19",""],["팝","My Heart Will Go On","Céline Dion","",2,"2026-06-28",""],["팝","My Love","Westlife","",1,"2026-04-28",""],["팝","My Universe","Coldplay X BTS","",4,"2025-12-31",""],["팝","Nervous","Gavin James","",3,"2026-07-02",""],["팝","New Rules","Dua Lipa","",2,"2026-07-11",""],["팝","No One","Alicia Keys","",1,"2025-11-10",""],["팝","Nobody's Perfect","Jessie J","",3,"2026-03-23",""],["팝","On My Way","Alan Walker, Sabrina Carpenter","",1,"2026-07-19",""],["팝","Oops!... I Did It Again","Britney Spears","",0,"",""],["팝","Our God","Chris Tomlin","",1,"2025-11-25",""],["팝","Paparazzi","Lady Gaga","",3,"2026-06-25","튠ver"],["팝","Payphone","Maroon 5","",5,"2026-04-26",""],["팝","Perfect","Ed Sheeran","",1,"2026-04-12",""],["팝","Perfect Duet (with Beyoncé)","Ed Sheeran","",1,"2025-07-07",""],["팝","Physical","Dua Lipa","",2,"2026-02-10",""],["팝","Physical","HWASA","",0,"",""],["팝","Poker Face","Lady Gaga","",2,"2026-09-24",""],["팝","POP/STARS","K/DA","",1,"2025-12-18",""],["팝","Price Tag","Jessie J","",4,"2026-05-05",""],["팝","Problem","Ariana Grande","",1,"2025-10-03",""],["팝","Radioactive","Imagine Dragons","",1,"2025-12-07",""],["팝","Rain On Me","Lady Gaga, Ariana Grande","",1,"2026-01-26",""],["팝","Raise Your Glass","P!nk","",6,"2026-07-11",""],["팝","Read All About It, Pt. III","Emeli Sandé","",1,"2025-11-04",""],["팝","Rearview","Andra Day","",3,"2026-03-10",""],["팝","Reckless Love","Cory Asbury","",1,"2026-09-24",""],["팝","Right Here Waiting","Richard Marx","",0,"",""],["팝","Rise","Katy Perry","",1,"2026-05-05",""],["팝","Rise Up","Andra Day","",6,"2026-06-25",""],["팝","River","Bishop Briggs","",2,"2026-02-10",""],["팝","Rockabye","Clean Bandit","",4,"2026-05-07",""],["팝","Rolling in the Deep","Adele","",1,"2025-11-02",""],["팝","S&M","Rihanna","",2,"2026-03-13",""],["팝","Santa Tell Me","Ariana Grande","",0,"",""],["팝","Say Something","A Great Big World, Christina Aguilera","",2,"2026-03-06",""],["팝","See You Again","Charlie Puth","",3,"2026-03-29",""],["팝","Set Fire To The Rain","Adele","",2,"2025-11-24",""],["팝","Seven","정국","",2,"2026-05-16",""],["팝","Señorita","Camila Cabello","",2,"2026-07-11",""],["팝","Shake It Off","Taylor Swift","",2,"2026-04-23",""],["팝","Shallow","Lady Gaga","",4,"2026-07-09",""],["팝","Shape of you","Ed Sheeran","",1,"2025-06-18",""],["팝","Shivers","Ed Sheeran","",5,"2026-07-19",""],["팝","Show Yourself","Idina Menzel, Evan Rachel Wood","",1,"2026-03-23",""],["팝","Sign of the Times","Harry Styles","",1,"2026-10-03",""],["팝","Sing","Pentatonix","",8,"2026-09-29",""],["팝","Single Ladies","Beyoncé","연습곡",0,"",""],["팝","Skin","Rag'n'Bone Man","",3,"2026-07-09",""],["팝","Skyfall","Adele","",4,"2026-07-02",""],["팝","Slowmotion","Karina","",2,"2026-03-23",""],["팝","Snowman","Sia","",5,"2025-12-24",""],["팝","So Sick","Ne-Yo","",2,"2026-04-28",""],["팝","Sober","Demi Lovato","",3,"2025-12-05",""],["팝","Someone Like You","Adele","",3,"2026-04-16",""],["팝","Someone You Loved","Lewis Capaldi","",1,"2025-11-17",""],["팝","Speechless","Naomi Scott","",1,"2026-03-24",""],["팝","Stand By Your Man","Tammy Wynette","",1,"2025-07-07",""],["팝","stand up","Cynthia Erivo","",1,"2026-04-12",""],["팝","STAY","The Kid LAROI","",2,"2026-05-05",""],["팝","Stay With me","Sam Smith","연습곡",0,"",""],["팝","Stronger","Kelly Clarkson","연습곡",0,"",""],["팝","Stuck","Stacie Orrico","",1,"2026-01-26",""],["팝","Stuttering","Fefe Dobson","",1,"2026-01-26",""],["팝","Sugar","Maroon 5","",1,"2026-04-26",""],["팝","Sunday Morning","Maroon 5","",0,"",""],["팝","Super Love","Dami Im","",1,"2026-02-21",""],["팝","Sweet but Psycho","Ava Max","",1,"2026-04-12",""],["팝","Take A Bow","Rihanna","",1,"2026-05-05",""],["팝","Take Me Home, Country Roads","John Denver","",4,"2026-09-24",""],["팝","Take Me To Church","Hozier","",3,"2026-02-22",""],["팝","Tango","Abir","",10,"2026-06-28",""],["팝","Telephone","Lady Gaga","",0,"",""],["팝","The Edge Of Glory","Lady Gaga","",1,"2025-12-03",""],["팝","The Great Escape","Boys Like Girls","",1,"2026-03-29",""],["팝","The Greatest","Sia","",1,"2026-01-27",""],["팝","The Night","Avicii","",0,"",""],["팝","The Way You Look Tonight","Doris Day","",3,"2025-12-18",""],["팝","This Love","Maroon 5","",2,"2026-07-09",""],["팝","Thunderclouds","LSD","",1,"2025-12-07",""],["팝","TiK ToK","Kesha","",1,"2026-03-23",""],["팝","Tiny Riot","Sam Ryder","",1,"2026-06-25","튠ver"],["팝","Titanium","David Guetta","",1,"2025-12-07",""],["팝","Titanium ft. Sia","David Guetta","",1,"2026-10-01",""],["팝","Top of the World","The Carpenters","",1,"2026-09-24",""],["팝","Toxic","Britney Spears","",2,"2026-06-07",""],["팝","Try","P!nk","",1,"2026-09-29",""],["팝","Try Everything","Shakira","",0,"",""],["팝","Turning Tables","Adele","",1,"2026-03-08",""],["팝","Umbrella","Rihanna","",1,"2026-04-19",""],["팝","Unconditionally","Katy Perry","",1,"2026-03-23",""],["팝","Underdog","Alicia Keys","",1,"2025-12-01",""],["팝","Unfaithful","Rihanna","",0,"",""],["팝","Unholy","Sam Smith","",5,"2026-04-26",""],["팝","Unstoppable","Sia","",4,"2026-07-09","튠ver"],["팝","Uptown Funk","Bruno Mars","",0,"",""],["팝","Valenti","보아","",1,"2026-02-02",""],["팝","Valerie","Amy Winehouse","",7,"2026-07-19",""],["팝","Vampire","Olivia Rodrigo","",0,"",""],["팝","Vincent","Don McLean","",1,"2026-01-26",""],["팝","Viva La Vida","Coldplay","",1,"2026-04-21",""],["팝","Volare","Gipsy Kings","",5,"2026-04-23",""],["팝","Waka Waka","Shakira","",0,"",""],["팝","Wake Me Up","Avicii","",4,"2026-07-09",""],["팝","Warriors","Imagine Dragons","",2,"2026-05-05",""],["팝","Watermelon Sugar","Harry Styles","",5,"2026-09-24",""],["팝","We Found Love","Rihanna, Calvin Harris","",1,"2025-06-08",""],["팝","We Will Rock you","Queen","",0,"",""],["팝","We're Good","Dua Lipa","",1,"2026-03-04",""],["팝","What Was I Made For","Billie Eilish","",3,"2026-07-02",""],["팝","What You Do","Chrisette Michele","",1,"2026-03-17",""],["팝","What's Going on","4 Non Blondes","",0,"",""],["팝","What's Up?","4 Non Blondes","",1,"2026-06-25",""],["팝","When We Were Young","Adele","",9,"2026-10-03",""],["팝","When You Believe","Whitney Houston, Mariah Carey","",1,"2025-10-03",""],["팝","Whiskey and Morphine","Alexander Jean","",5,"2026-07-16",""],["팝","wish you were gay","Billie Eilish","",2,"2026-02-03",""],["팝","Wrecking Ball","Miley Cyrus","",3,"2026-03-04",""],["팝","You Give Love a Bad Name","Bon Jovi","",4,"2026-04-21",""],["팝","You Oughta Know","Alanis Morissette","",1,"2026-02-03",""],["팝","You Raise Me Up","Josh Groban","",2,"2026-04-28",""],["팝","Yoü and I","Lady Gaga","",2,"2026-07-19",""],["팝","ˣ‿ˣ (SMiLEY)","YENA","",1,"2026-04-02",""],["J-pop","귀여워서 미안해","HoneyWorks","",2,"2026-06-25","튠ver"],["J-pop","내가 죽으려고 생각한 것은","나카시마 미카","",1,"2026-05-07",""],["J-pop","눈의 꽃","나카시마 미카","",0,"",""],["J-pop","눈의 꽃(雪의 華)","나카시마 미카","",1,"2026-05-07",""],["J-pop","달의요정 세일러문(일본어)","세일러문ost","",1,"2026-05-09",""],["J-pop","러브레볼루션","","",1,"2026-04-28",""],["J-pop","만찬가(晩餐歌)","tuki.","",1,"2026-09-24",""],["J-pop","멜리사","강철의 연금술사ost","",1,"2026-05-07",""],["J-pop","미소 폭탄","유유백서OP","",1,"2026-05-07",""],["J-pop","바보같이(ばかみたい)","용과 같이 수록곡","",1,"2026-05-07",""],["J-pop","버터플라이(일본어)","디지몬ost","",1,"2026-05-07",""],["J-pop","베텔기우스(ベテルギウス)","유우리","",1,"2026-05-07",""],["J-pop","사쿠란보","오오츠카 아이","",1,"2026-05-07",""],["J-pop","숲속의 작은 레스토랑","테시마 아오이","",1,"2026-05-07",""],["J-pop","신조오 사사게요","진격의거인시즌2 OP","",1,"2026-05-07",""],["J-pop","악마의 아이","히구치 아이","",1,"2026-05-07",""],["J-pop","악마의 아이(悪魔の子)","히구치 아이","",1,"2026-04-12",""],["J-pop","양보할 수 없는 소원'(ゆずれない願い)","타무라 나오미","",1,"2026-04-12",""],["J-pop","잔혹한 천사의 테제(残酷な天使のテーゼ)","신세기 에반게리온OP","",4,"2026-05-09",""],["J-pop","춤춰요 폼포코링","마루코는 아홉살OST","",1,"2026-05-07",""],["J-pop","큐티 하니(キューティーハニー )","큐티 하니OP","",1,"2026-05-09",""],["J-pop","푸른 산호초","마츠다 세이코","",1,"2026-05-07",""],["J-pop","홍련의 화살","진격의 거인OP","",1,"2026-05-07",""],["J-pop","ANGELUS(안젤루스)","이누야샤 6기OP","",1,"2026-05-07",""],["J-pop","brave heart(진화한다ㅆ발)","디지몬OST","",1,"2026-05-07",""],["J-pop","Doraemon no uta","도라에몽OP","",1,"2026-05-07",""],["J-pop","Driver`s high","L'Arc~en~Ciel","",1,"2026-05-07",""],["J-pop","Every Heart - Minnano Kimochi","BoA","",1,"2026-05-07",""],["J-pop","INVOKE","건담시드ost","",2,"2026-05-10",""],["J-pop","Iris out","요네즈 켄시","",1,"2026-05-07",""],["J-pop","KICK BACK","요네즈 켄시","",3,"2026-05-12",""],["J-pop","Lemon","요네즈 켄시","",1,"2026-05-07",""],["J-pop","Plastic Love","Mariya Takeuchi","",1,"2026-05-07",""],["J-pop","Silhouette","KANA-BOON","",1,"2026-05-07",""],["J-pop","ベテルギウス(베텔기우스)","優里(유우리)","",1,"2025-12-01",""],["OST·애니","잔혹한 천사의 테제","","",1,"2026-05-10",""],["OST·애니","큐티허니","","",1,"2026-05-10",""],["OST·애니","A Whole New World","Aladdin O.S.T.","",1,"2025-10-03",""],["OST·애니","Ghost","Justin Bieber","",3,"2026-09-22",""],["OST·애니","I'll Make A Man Out of You","Mulan O.S.T.","",1,"2025-09-30",""],["OST·애니","Reflection","Mulan OST","",1,"2026-03-31",""],["OST·애니","Rewrite the stars","The Greatest Showman O.S.T.","",1,"2025-08-04",""],["OST·애니","The Phantom of the Opera","The Phantom of the Opera O.S.T.","",2,"2026-04-05",""],["OST·애니","Welcome to the Other Side","The Greatest Showman","",0,"",""],["뮤지컬","중력을 벗어나","뮤지컬 위키드","",2,"2025-11-16",""],["뮤지컬","Death Note","뮤지컬 데스노트","",3,"2026-04-23",""],["뮤지컬","Defying Gravity","","",0,"",""],["뮤지컬","Land of Lola","뮤지컬 킹키부츠","",6,"2026-04-05",""],["트로트","노란 샤쓰의 사나이","한명숙","",1,"2026-05-03",""],["트로트","백만송이 장미","심수봉","",1,"2026-05-03",""],["트로트","홍시","나훈아","",8,"2026-07-02",""],["트로트","희나리","구창모","",1,"2026-07-02",""],["재즈","L-O-V-E","Nat King Cole","",1,"2026-01-25",""],["재즈","Misty","Ella Fitzgerald","",7,"2026-03-31",""],["캐롤","All I Want for Christmas Is You","Mariah Carey","",1,"2025-12-24",""],["캐롤","Feliz Navidad","José Feliciano","",1,"2025-12-24",""],["캐롤","Have Yourself A Merry Little Christmas","Frank Sinatra","",5,"2025-12-24",""],["캐롤","It's Beginning To Look A Lot Like Christmas","Michael Bublé","",1,"2025-12-24",""],["캐롤","Jingle Bell Rock","Bobby Helms","",1,"2025-12-24",""],["캐롤","Last Christmas","Cardi B","",1,"2025-12-24",""],["캐롤","Let It Snow! Let It Snow! Let It Snow!","Frank Sinatra","",1,"2025-12-24",""],["캐롤","Winter Wonderland","Michael Bublé","",1,"2025-12-23",""],["기타","방가방가 우리친구 햄토리","햄토리OP","",1,"2026-03-23",""],["기타","첨밀밀(甜蜜蜜, Tian Mi Mi)","등려군","",1,"2026-03-23",""]];
+const ORDER=['치비 노래','가요','팝','J-pop','OST·애니','뮤지컬','트로트','재즈','캐롤','기타'];
+const TAGS={'헬곡':'hot','연습곡':'prac','NEW':'new'};
+const songs=DATA.map(([g,t,a,tag,n,last,ver],i)=>({i,g,t,a,tag,n,last,ver}));
+const CHO='ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+const cho=s=>[...s].map(c=>{const k=c.charCodeAt(0)-0xAC00;return k>=0&&k<11172?CHO[Math.floor(k/588)]:c}).join('');
+const flat=s=>s.toLowerCase().replace(/[\s\W_]+/g,'');
+songs.forEach(s=>{s.key=flat(s.t+' '+s.a);s.ck=cho(s.t.replace(/\s/g,''))+' '+cho(s.a.replace(/\s/g,''))});
+let genre='전체', tagF='';
+const $=id=>document.getElementById(id);
+function chips(){
+  const c={};songs.forEach(s=>c[s.g]=(c[s.g]||0)+1);
+  const tc={};songs.forEach(s=>s.tag&&(tc[s.tag]=(tc[s.tag]||0)+1));
+  const items=[['전체',songs.length,'']].concat(ORDER.filter(g=>c[g]).map(g=>[g,c[g],g==='치비 노래'?'own':'']))
+    .concat(Object.keys(TAGS).filter(t=>tc[t]).map(t=>['#'+t,tc[t],'']));
+  $('chips').innerHTML=items.map(([g,n,cl])=>`<button type="button" class="chip ${cl}" data-g="${g}" aria-pressed="${g===(tagF?'#'+tagF:genre)}">${g}<b>${n}</b></button>`).join('');
+}
+function filtered(){
+  const q=$('q').value.trim();
+  const isCho=q&&/^[ㄱ-ㅎ\s]+$/.test(q);
+  const fq=flat(q), cq=q.replace(/\s/g,'');
+  return songs.filter(s=>(tagF?s.tag===tagF:(genre==='전체'||s.g===genre))&&
+    (!q||(isCho?s.ck.replace(/\s/g,'').includes(cq)||s.ck.includes(cq):s.key.includes(fq))));
+}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function row(s,showG){
+  const tag=s.tag?`<span class="tag ${TAGS[s.tag]}">${s.tag}</span>`:'';
+  const ver=s.ver?`<span class="tag ver">${esc(s.ver)}</span>`:'';
+  const meta=s.n?`<span class="n">${s.n}회</span>${s.last.slice(2).replace(/-/g,'.')}`:'';
+  return `<li><button type="button" data-i="${s.i}"><span class="t">${esc(s.t)}${ver}${tag}</span><span class="meta">${meta}</span><span class="a">${esc(s.a||'')}${showG&&s.g?(s.a?' · ':'')+s.g:''}</span></button></li>`;
+}
+function render(){
+  const list=filtered(), sort=$('sort').value;
+  $('count').textContent=`${list.length}곡`;
+  if(!list.length){$('list').innerHTML=`<p class="empty">찾는 곡이 없어요. 검색어를 줄이거나 장르를 '전체'로 바꿔 보세요.</p>`;return}
+  if(sort!=='name'){
+    const l=[...list].sort(sort==='many'?(a,b)=>b.n-a.n||a.i-b.i:(a,b)=>(b.last||'').localeCompare(a.last||'')||a.i-b.i);
+    $('list').innerHTML=`<ul>${l.map(s=>row(s,true)).join('')}</ul>`;return;
+  }
+  const by={};list.forEach(s=>(by[s.g]=by[s.g]||[]).push(s));
+  $('list').innerHTML=ORDER.filter(g=>by[g]).map(g=>`<h2 class="${g==='치비 노래'?'own':''}">${g}<small>${by[g].length}곡</small></h2><ul>${by[g].map(s=>row(s,false)).join('')}</ul>`).join('');
+}
+let tt;
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1600)}
+async function copy(s){
+  const text=s.t;
+  try{await navigator.clipboard.writeText(text);toast(`'${text}' 복사했어요`)}
+  catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');toast(`'${text}' 복사했어요`)}catch(_){toast('복사가 안 돼요. 제목을 길게 눌러 복사해 주세요')}ta.remove()}
+}
+let cur=null;
+function draw(){const l=filtered();if(!l.length){toast('뽑을 곡이 없어요');return}
+  cur=l[Math.floor(Math.random()*l.length)];
+  $('dg').textContent=cur.g+(cur.n?` · ${cur.n}번 부름`:'');$('dt').textContent=cur.t;$('da').textContent=cur.a||'';
+  if(!$('dlg').open)$('dlg').showModal();}
+$('chips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const g=b.dataset.g;
+  if(g.startsWith('#')){tagF=g.slice(1);genre='전체'}else{tagF='';genre=g}chips();render();});
+$('q').addEventListener('input',render);$('sort').addEventListener('change',render);
+$('list').addEventListener('click',e=>{const b=e.target.closest('button[data-i]');if(b)copy(songs[+b.dataset.i])});
+$('pick').addEventListener('click',draw);$('again').addEventListener('click',draw);
+$('dcopy').addEventListener('click',()=>cur&&copy(cur));$('dclose').addEventListener('click',()=>$('dlg').close());
+$('dlg').addEventListener('click',e=>{if(e.target===$('dlg'))$('dlg').close()});
+chips();render();
+</script>
+</body>
+</html>
