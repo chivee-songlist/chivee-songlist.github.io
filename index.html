@@ -42,7 +42,25 @@ h1 .note{color:var(--rose)}
 body.narrow .strip{height:160px;margin-top:4px}
 
 /* 오늘의 추천 */
-.today{margin:18px 0 0;background:linear-gradient(100deg,#FFF7CF,#FFFDF3 55%,#F3EBFF);border:2px solid var(--butter-d);
+.bingoCard{all:unset;box-sizing:border-box;cursor:pointer;margin:18px 0 0;width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:18px;position:relative;overflow:hidden;
+  background:linear-gradient(110deg,#F3EBFF,#FCE3EE 50%,#FFF7CF);border:2px solid var(--lilac);animation:bcglow 2.4s ease-in-out infinite alternate}
+@keyframes bcglow{from{border-color:var(--lilac);box-shadow:0 4px 0 rgba(123,98,196,.25)}to{border-color:var(--butter-d);box-shadow:0 4px 0 rgba(233,201,74,.35),0 0 18px rgba(246,197,218,.7)}}
+.bingoCard::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.6) 45%,transparent 60%);transform:translateX(-100%);animation:bcshine 3.2s ease-in-out infinite}
+@keyframes bcshine{60%,100%{transform:translateX(100%)}}
+.bingoCard:active{transform:translateY(2px)}
+.bcL{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.bcT{font:400 24px var(--display);color:var(--px)}
+.bcD{font-size:13px;color:var(--ink)}
+.bcS{font-size:12.5px;color:var(--rose);font-weight:700;min-height:1em}
+.bcMini{display:grid;grid-template-columns:repeat(3,14px);gap:3px;flex:none}
+.bcMini i{width:14px;height:14px;border-radius:3px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--lilac)}
+.bcMini i.on{background:var(--butter-d);box-shadow:none}.bcMini i.ln{background:var(--rose);box-shadow:none}
+.bcMini i.jk{box-shadow:inset 0 0 0 2px #E9B949}
+.bcGo{flex:none;background:var(--ink);color:#fff;border-radius:999px;padding:9px 14px;font-size:14px;font-weight:600}
+@media (max-width:420px){.bcGo{display:none}.bcT{font-size:22px}}
+body.night .bingoCard{background:linear-gradient(110deg,#2E2560,#3E2650 50%,#3B3420)}
+body.night .bcMini i{background:#1D1736}
+.today{margin:14px 0 0;background:linear-gradient(100deg,#FFF7CF,#FFFDF3 55%,#F3EBFF);border:2px solid var(--butter-d);
   border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:12px}
 .today .lab{font:400 14px var(--display);color:#8A6A00;background:var(--butter);border-radius:8px;padding:4px 8px;white-space:nowrap}
 .today .t{font-weight:600;font-size:16px;overflow-wrap:anywhere}
@@ -241,6 +259,11 @@ body.winter .dim{filter:brightness(.8) saturate(.9) hue-rotate(-8deg)}
     <div class="strip" id="strip"></div>
   </header>
 
+  <button class="bingoCard" type="button" id="bingoOpen" aria-label="노래 빙고 열기">
+    <span class="bcL"><span class="bcT">🎯 노래 빙고</span><span class="bcD">방송에서 나온 노래 칸을 지워요 · 반짝 칸엔 신청곡!</span><span class="bcS" id="bcStat"></span></span>
+    <span class="bcMini" id="bcMini" aria-hidden="true"></span>
+    <span class="bcGo">하러 가기 ▶</span>
+  </button>
   <section class="today" aria-label="오늘의 추천곡">
     <span class="lab">오늘의 추천곡</span>
     <div class="grow"><div class="t" id="tdT"></div><div class="a" id="tdA"></div></div>
@@ -256,7 +279,6 @@ body.winter .dim{filter:brightness(.8) saturate(.9) hue-rotate(-8deg)}
       <button class="btn main" type="button" id="pickAll">🎰 전체에서 뽑기</button>
       <button class="btn lil" type="button" id="pickCat">이 분류에서 뽑기</button>
       <button class="btn ghost basket" type="button" id="favOpen">★ 내 바구니 <b id="favN">0</b></button>
-      <button class="btn ghost" type="button" id="bingoOpen">🎯 노래 빙고</button>
       <button class="btn ghost" type="button" id="sndBtn" aria-pressed="true" aria-label="소리 켜기/끄기">🔊</button>
   </div>
   <div class="countrow"><div class="count" id="count" aria-live="polite"></div>
@@ -303,7 +325,7 @@ body.winter .dim{filter:brightness(.8) saturate(.9) hue-rotate(-8deg)}
         <ul id="jkSug"></ul>
         <input id="jkA" type="text" placeholder="가수 (몰라도 괜찮아요)" autocomplete="off" maxlength="30">
         <div class="row">
-          <button class="btn lil" type="button" id="jkDice">🎲 아무거나</button>
+          <button class="btn lil" type="button" id="jkDice">🎲 뽑기</button>
           <button class="btn main" type="button" id="jkOk">이걸로!</button>
           <button class="btn ghost" type="button" id="jkClr">비우기</button>
           <button class="btn ghost" type="button" id="jkX">취소</button>
@@ -386,16 +408,21 @@ function sortUI(){ document.querySelectorAll('.sort').forEach(b=>b.setAttribute(
 document.querySelector('.sorts').addEventListener('click',e=>{ const b=e.target.closest('.sort'); if(!b||b.dataset.s===SORT) return;
   SORT=b.dataset.s; try{ localStorage.setItem('chivee-sort',SORT); }catch(e){} sortUI(); render(); });
 sortUI();
-function rowsOf(L,c){
-  const byA=SORT==='a'&&c!=='치비 노래';
-  return L.slice().sort((x,y)=>byA?(!x.a)-(!y.a)||cmp(x.a||'',y.a||'')||cmp(x.t,y.t):cmp(x.t,y.t)).map(row).join('');
+const WIDE=matchMedia('(min-width:768px)');
+function rowsOf(L){
+  if(SORT!=='a') return L.slice().sort((x,y)=>cmp(x.t,y.t)).map(row).join('');
+  const S=L.slice().sort((x,y)=>(!x.a)-(!y.a)||cmp(x.a||'',y.a||'')||cmp(x.t,y.t));
+  if(!WIDE.matches) return S.map(row).join('');
+  const g={}; S.forEach(s=>(g[s.a||'']=g[s.a||'']||[]).push(s));
+  return Object.keys(g).map(a=>`<li class="ag">${esc(a||'가수 정보 없음')}<small>${g[a].length}곡</small></li>`+g[a].map(row).join('')).join('');
 }
+WIDE.addEventListener('change',()=>render());
 function render(){
   const list=filtered();
   $('count').textContent = `${list.length}곡`;
   if(!list.length){ $('list').innerHTML='<p class="empty">찾는 곡이 없어요. 검색어를 줄이거나 분류를 \'전체\'로 바꿔 보세요.</p>'; return; }
   const by={}; list.forEach(s=>(by[s.c]=by[s.c]||[]).push(s));
-  $('list').innerHTML = ORDER.filter(c=>by[c]).map(c=>`<h2 class="${c==='치비 노래'?'own':''}">${c}<small>${by[c].length}곡</small></h2><ul class="list">${rowsOf(by[c],c)}</ul>`).join('');
+  $('list').innerHTML = ORDER.filter(c=>by[c]).map(c=>`<h2 class="${c==='치비 노래'?'own':''}">${c}<small>${by[c].length}곡</small></h2><ul class="list">${rowsOf(by[c])}</ul>`).join('');
 }
 $('q').addEventListener('input',render);
 $('list').addEventListener('click',e=>{
@@ -466,7 +493,13 @@ BS.boards=BS.boards.map(b=>({name:b.name,...withJoker(b)}));
 BS.cur=Math.min(Math.max(0,BS.cur|0),BS.boards.length-1);
 let BOARD=BS.boards[BS.cur];
 const linesOf=b=>LINES.filter(l=>l.every(i=>b.marks[i])).length;
-function saveB(){ BS.boards[BS.cur]=BOARD; store.set('chivee-bingos2',BS); }
+function saveB(){ BS.boards[BS.cur]=BOARD; store.set('chivee-bingos2',BS); bingoCard(); }
+function bingoCard(){
+  const done=LINES.filter(l=>l.every(i=>BOARD.marks[i])), ln=new Set(done.flat());
+  $('bcMini').innerHTML=BOARD.marks.map((m,i)=>`<i class="${ln.has(i)?'ln':m?'on':''}${i===BOARD.joker?' jk':''}"></i>`).join('');
+  const n=BOARD.marks.filter(Boolean).length;
+  $('bcStat').textContent = n ? `${BOARD.name} · ${n}칸 지움${done.length?` · 빙고 ${done.length}줄!`:''}${BS.boards.length>1?` · 판 ${BS.boards.length}개`:''}` : (BS.boards.length>1?`판 ${BS.boards.length}개 진행 중`:'');
+}
 function renderTabs(){
   $('btabs').innerHTML = BS.boards.map((b,i)=>{ const n=linesOf(b);
     return `<button class="btab" type="button" role="tab" data-t="${i}" aria-selected="${i===BS.cur}">${esc(b.name)}${n?` <b>★${n}</b>`:''}</button>`; }).join('')
@@ -474,7 +507,7 @@ function renderTabs(){
   const on=$('btabs').querySelector('[aria-selected="true"]'); if(on) on.scrollIntoView({block:'nearest',inline:'nearest'});
 }
 function useBoard(i){ BS.cur=i; BOARD=BS.boards[i]; lastLines=linesOf(BOARD); $('jkPop').hidden=true; renderBingo(false); }
-let lastLines=linesOf(BOARD);
+let lastLines=linesOf(BOARD); bingoCard();
 function renderBingo(celebrateNew){
   const done=LINES.filter(l=>l.every(i=>BOARD.marks[i]));
   const inLine=new Set(done.flat()), heart=`<img src="${PX.FX.heart.s}" alt="">`;
