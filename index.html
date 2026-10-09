@@ -57,6 +57,11 @@ h1{font:400 clamp(46px,12vw,68px)/.95 var(--display);margin:0;letter-spacing:-.0
   text-shadow:0 2px 0 #fff,0 0 22px rgba(255,236,150,.9)}
 h1 .note{color:var(--rose)}
 .sub{color:var(--soft);margin:8px 0 0;font-size:14px}
+.sns{display:flex;gap:10px;align-items:center;margin-top:12px}   /* 채널 링크 */
+.sns a{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:var(--sheet);box-shadow:0 1px 0 var(--line),0 0 0 1.5px var(--line);text-decoration:none;transition:transform .15s}
+.sns a:hover{transform:translateY(-2px)}
+.sns svg{width:24px;height:24px;display:block}
+.sns a.soop{width:auto;padding:0 10px;font:800 12.5px/1 var(--body);letter-spacing:.02em;color:#fff;background:#0B5CFF}
 .strip{position:relative;height:0;overflow:hidden}
 body.narrow .strip{height:160px;margin-top:4px}
 
@@ -295,13 +300,18 @@ body.winter .dim{filter:brightness(.8) saturate(.9) hue-rotate(-8deg)}
 <div class="wrap">
   <header>
     <h1>치비<span class="note">♪</span></h1>
-    <p class="sub">곡을 누르면 제목이 복사돼요. 채팅창에 붙여서 신청하세요!</p>
+    <nav class="sub sns" aria-label="치비 채널">
+      <a href="https://youtube.com/@chivee72" target="_blank" rel="noopener" aria-label="유튜브" title="유튜브"><svg viewBox="0 0 24 24"><rect x="1.5" y="5" width="21" height="14" rx="4.5" fill="#FF0033"/><path d="M10 9l5.5 3-5.5 3z" fill="#fff"/></svg></a>
+      <a href="https://www.sooplive.com/station/naian0109" target="_blank" rel="noopener" aria-label="숲" title="숲 (SOOP)" class="soop">SOOP</a>
+      <a href="https://www.instagram.com/chi_vee" target="_blank" rel="noopener" aria-label="인스타그램" title="인스타그램"><svg viewBox="0 0 24 24"><defs><linearGradient id="igg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".35" stop-color="#FA7E1E"/><stop offset=".65" stop-color="#D62976"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#igg)"/><rect x="5.5" y="5.5" width="13" height="13" rx="4" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.1" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.3" cy="7.7" r="1" fill="#fff"/></svg></a>
+      <a href="https://www.tiktok.com/@chi_vee" target="_blank" rel="noopener" aria-label="틱톡" title="틱톡"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="6" fill="#111"/><path d="M13.2 6v8.3a2.6 2.6 0 1 1-2.6-2.6" fill="none" stroke="#25F4EE" stroke-width="2" stroke-linecap="round" transform="translate(-.6 .5)"/><path d="M13.2 6v8.3a2.6 2.6 0 1 1-2.6-2.6M13.2 6c.3 1.9 1.6 3 3.4 3.2" fill="none" stroke="#FE2C55" stroke-width="2" stroke-linecap="round" transform="translate(.6 -.5)"/><path d="M13.2 6v8.3a2.6 2.6 0 1 1-2.6-2.6M13.2 6c.3 1.9 1.6 3 3.4 3.2" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></a>
+    </nav>
     <div class="strip" id="strip"></div>
   </header>
 
   <div class="duo">
 <button class="bingoCard" type="button" id="bingoOpen" aria-label="노래 빙고 열기">
-    <span class="bcL"><span class="bcT">🎯 노래 빙고</span><span class="bcD">치비에게 빙고판에 있는 노래 신청하고<br>빙고를 완성해 선물을 받으세요!</span><span class="bcS" id="bcStat"></span></span>
+    <span class="bcL"><span class="bcT">🎁 노래 빙고</span><span class="bcD">치비에게 빙고판에 있는 노래 신청하고<br>빙고를 완성해 선물을 받으세요!</span><span class="bcS" id="bcStat"></span></span>
     <span class="bcMini" id="bcMini" aria-hidden="true"></span>
     <span class="bcGo">하러 가기 ▶</span>
   </button>
@@ -348,7 +358,7 @@ body.winter .dim{filter:brightness(.8) saturate(.9) hue-rotate(-8deg)}
 </dialog>
 <dialog id="bingoDlg" aria-label="노래 빙고">
   <div class="panel">
-    <h3>🎯 노래 빙고</h3>
+    <h3>🎁 노래 빙고</h3>
     <div class="btabs" id="btabs" role="tablist" aria-label="빙고판"></div>
     <div class="grid" id="grid"></div>
     <div class="bingo-msg" id="bingoMsg"></div>
@@ -664,7 +674,7 @@ $('toBottom').onclick=()=>scrollTo({top:document.documentElement.scrollHeight,be
     $('pkLab').textContent=L.length?'🎙️ 오늘의 치비 픽':'오늘의 추천곡';
     $('pkMsg').textContent=L.length&&p.msg?`“${p.msg}”`:'';
     $('pkList').innerHTML=items.map((x,i)=>{ const k=songs.find(s=>s.t===x.t&&(!x.a||s.a===x.a));
-      return `<li>${L.length?`<span class="pn">${i+1}</span>`:''}<div class="grow"><b>${esc(x.t)}</b><small>${esc(x.a||'')}</small></div>${k?`<button class="fav" type="button" data-pf="${k.i}" aria-pressed="${FAV.has(favKey(k))}" aria-label="바구니에 담기">${FAV.has(favKey(k))?'★':'☆'}</button>`:''}<button class="btn ghost" type="button" data-pc="${esc(x.t)}">복사</button></li>`; }).join('');
+      return `<li>${L.length?`<span class="pn">${i+1}</span>`:''}<div class="grow"><b>${esc(x.t)}</b><small>${esc(x.a||'')}</small></div>${k?`<button class="fav" type="button" data-pf="${k.i}" aria-pressed="${FAV.has(favKey(k))}" aria-label="바구니에 담기">${FAV.has(favKey(k))?'★':'☆'}</button>`:''}</li>`; }).join('');
   }
   $('pkList').addEventListener('click',e=>{ const c=e.target.closest('[data-pc]'); if(c){ copy(c.dataset.pc); return; }
     const f=e.target.closest('[data-pf]'); if(f){ toggleFav(songs[+f.dataset.pf],f); render(); } });
