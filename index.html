@@ -755,15 +755,18 @@ function fxLoop(){
   if(FX.p.length) requestAnimationFrame(fxLoop); else { FX.run=false; g.clearRect(0,0,innerWidth,innerHeight); }
 }
 const ctr=el=>{ const r=el.getBoundingClientRect(); return [r.left+r.width/2,r.top+r.height/2]; };
-const rnd4=()=>{ try{ const a=new Uint32Array(1); crypto.getRandomValues(a); return a[0]%4; }catch(e){ return Math.floor(Math.random()*4); } };
+/* 당첨 위치: 카드를 누르는 순간 정함. 난수 두 가지를 더해서 4로 나눈 나머지 → 한쪽이 고르기만 해도 결과는 정확히 1/4 */
+const rnd4=()=>{ let a=0; try{ const u=new Uint32Array(1); crypto.getRandomValues(u); a=u[0]%4; }catch(e){} return (a+Math.floor(Math.random()*4))%4; };
 const ga=n=>{ const c=n.charCodeAt(n.length-1)-0xAC00; return n+(c>=0&&c%28?'이':'가'); };   // 이안이 / 루카가
 const LOSE=[n=>`${n}: 아쉽다냥…`,n=>`${n}: 다음 판엔 꼭이다냥`,n=>`${ga(n)} 대신 위로해 줄게요`,n=>`${n}: 한 곡 더 신청해 볼래냥?`,n=>`${ga(n)} 당첨을 숨겨 놨나 봐요`];   // 고양이 그림과 이름을 맞춤
 const todayKey=()=>{ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); };
 function luckStat(){ let o=store.get('chivee-luck',null); if(!o||o.d!==todayKey()) o={d:todayKey(),n:0,w:0,h:''}; return o; }
-function luckStatUI(){ const o=luckStat(); $('lstat').innerHTML=o.n?`오늘 ${o.n}번 도전 · 당첨 ${o.w}번<span class="hist">${esc(o.h.slice(-10))}</span>`:'오늘 첫 도전을 기다리는 중'; }
+function luckStatUI(){ const o=luckStat(); $('lstat').innerHTML=o.n?`오늘 ${o.n}번 도전 · 당첨 ${o.w}번<span class="hist">${esc(o.h.slice(-10))}</span>`:'오늘 첫 도전을 기다리는 중';
+  if(LUCK.dbg){ const lg=store.get('chivee-luck-log',[]), pos=[0,0,0,0]; let w=0; lg.forEach(([n,x])=>{ pos[x]++; if(n===x) w++; });   // 기록 줄을 누르면 확인
+    $('lstat').innerHTML+=`<br>기록 ${lg.length}판 · 당첨 ${w}번 (${lg.length?Math.round(w/lg.length*1000)/10:0}%) · 당첨 위치 1번 ${pos[0]} / 2번 ${pos[1]} / 3번 ${pos[2]} / 4번 ${pos[3]}`; } }
 function luckClear(){ LUCK.t.forEach(clearTimeout); LUCK.t=[]; }
 function luckDeal(){
-  luckClear(); LUCK.win=rnd4(); LUCK.state='deal'; $('lrays').classList.remove('on');
+  luckClear(); LUCK.win=-1; LUCK.state='deal'; $('lrays').classList.remove('on');
   $('lcards').innerHTML=[1,2,3,4].map(n=>`<button class="lc" type="button" data-n="${n}" aria-label="${n}번 카드"><span class="lin"><span class="lback"><span class="ltop">CHIVEE ♪</span><span class="lemb"><b>${n}</b></span><span class="lbot">✦✧✦</span></span><span class="lfront"></span></span></button>`).join('');
   const c=$('lcards'); c.classList.remove('deal'); void c.offsetWidth; c.classList.add('deal');
   $('lmsg').className='lmsg'; $('lmsg').textContent='몇 번 카드를 열어 볼까요?';
@@ -779,7 +782,8 @@ function luckFront(el,win,big){
 }
 $('lcards').addEventListener('click',e=>{
   const b=e.target.closest('.lc'); if(!b||LUCK.state!=='ready') return;   // 고른 뒤엔 다시 눌러도 그대로
-  LUCK.state='pick'; const n=+b.dataset.n-1, win=n===LUCK.win, all=[...$('lcards').children];
+  LUCK.state='pick'; LUCK.win=rnd4(); const n=+b.dataset.n-1, win=n===LUCK.win, all=[...$('lcards').children];
+  { const lg=store.get('chivee-luck-log',[]); lg.push([n,LUCK.win]); store.set('chivee-luck-log',lg.slice(-500)); }   // 확률 확인용 기록
   all.forEach((x,i)=>{ x.classList.add('done'); if(i!==n) x.classList.add('fade'); });
   b.classList.add('sel','charge'); $('lmsg').textContent=`${n+1}번 카드를 열어요…`;
   fxSize(); let sk=0; const suck=setInterval(()=>{ const [cx,cy]=ctr(b); fxSuck(cx,cy); if(++sk>16) clearInterval(suck); },60); LUCK.t.push(suck);
@@ -799,6 +803,7 @@ $('lcards').addEventListener('click',e=>{
     LUCK.t.push(setTimeout(()=>{ LUCK.state='done'; $('luckNext').hidden=false; },1300));   // 다음 판은 치비가 누를 때만
   },1000));
 });
+$('lstat').onclick=()=>{ LUCK.dbg=!LUCK.dbg; luckStatUI(); };
 $('luckNext').onclick=()=>{ if(LUCK.state==='done') luckDeal(); };
 $('luckOpen').onclick=()=>{ if(LUCK.state!=='ready'||!$('lcards').children.length) luckDeal(); else luckStatUI(); $('luckDlg').showModal(); };
 $('luckClose').onclick=()=>$('luckDlg').close();
